@@ -27,7 +27,9 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
+        defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "https://accounts.google.com", "https://apis.google.com"],
+        frameSrc: ["'self'", "https://accounts.google.com", "https://apis.google.com"],
         connectSrc: ["'self'", "https://accounts.google.com", "https://apis.google.com"]
       }
     }
