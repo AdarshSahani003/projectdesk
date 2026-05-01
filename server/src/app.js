@@ -23,7 +23,16 @@ const allowedOrigins = (process.env.CLIENT_ORIGINS || process.env.CLIENT_ORIGIN 
   .map((origin) => origin.trim())
   .filter(Boolean);
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        scriptSrc: ["'self'", "https://accounts.google.com", "https://apis.google.com"],
+        connectSrc: ["'self'", "https://accounts.google.com", "https://apis.google.com"]
+      }
+    }
+  })
+);
 app.use(
   cors({
     origin(origin, callback) {
