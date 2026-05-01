@@ -6,7 +6,7 @@ function getTransport() {
   const missingValue = requiredValues.find((key) => !process.env[key]);
 
   if (missingValue) {
-    throw new HttpError(500, "SMTP is not configured");
+    return null; // SMTP not configured, will skip email sending
   }
 
   return nodemailer.createTransport({
@@ -21,11 +21,17 @@ function getTransport() {
 }
 
 export async function sendVerificationEmail(user, token) {
+  const transport = getTransport();
+  if (!transport) {
+    console.log("SMTP not configured - skipping email for user:", user.email);
+    return; // Skip email if SMTP not configured
+  }
+
   const appUrl = process.env.APP_URL || process.env.CLIENT_URL || "http://localhost:5173";
   const verifyUrl = `${appUrl.replace(/\/$/, "")}/?verifyToken=${token}`;
   const from = process.env.SMTP_FROM || process.env.SMTP_USER;
 
-  await getTransport().sendMail({
+  await transport.sendMail({
     from,
     to: user.email,
     subject: "Verify your TaskFlow account",
@@ -42,11 +48,17 @@ export async function sendVerificationEmail(user, token) {
 }
 
 export async function sendPasswordResetEmail(user, token) {
+  const transport = getTransport();
+  if (!transport) {
+    console.log("SMTP not configured - skipping email for user:", user.email);
+    return; // Skip email if SMTP not configured
+  }
+
   const appUrl = process.env.APP_URL || process.env.CLIENT_URL || "http://localhost:5173";
   const resetUrl = `${appUrl.replace(/\/$/, "")}/?resetToken=${token}`;
   const from = process.env.SMTP_FROM || process.env.SMTP_USER;
 
-  await getTransport().sendMail({
+  await transport.sendMail({
     from,
     to: user.email,
     subject: "Reset your TaskFlow password",
@@ -62,4 +74,5 @@ export async function sendPasswordResetEmail(user, token) {
     `
   });
 }
+
 

@@ -45,13 +45,16 @@ export async function signup(request, response) {
   const user = await User.create({
     ...request.body,
     emailVerificationToken: verificationToken,
-    emailVerificationExpires: new Date(Date.now() + 1000 * 60 * 60)
+    emailVerificationExpires: new Date(Date.now() + 1000 * 60 * 60),
+    emailVerified: !process.env.SMTP_HOST // Auto-verify if SMTP not configured
   });
 
   await sendVerificationEmail(user, verificationToken);
 
   response.status(201).json({
-    message: "Check your email to verify your account before logging in"
+    message: process.env.SMTP_HOST
+      ? "Check your email to verify your account before logging in"
+      : "Account created! You can now login."
   });
 }
 
