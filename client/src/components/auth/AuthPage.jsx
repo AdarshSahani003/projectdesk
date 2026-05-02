@@ -199,12 +199,6 @@ export function AuthPage({ error, googleLoginReady, onEmailAuth, onVerifyEmail, 
             )}
           </form>
 
-          {googleLoginReady && (
-            <div className="google-auth-block">
-              <div className="divider">or</div>
-              <GoogleLogin onSuccess={(response) => onGoogleAuth(response.credential)} onError={onGoogleError} width="100%" />
-            </div>
-          )}
         </CardContent>
       </Card>
     </main>
